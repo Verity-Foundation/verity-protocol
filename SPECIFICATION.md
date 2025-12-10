@@ -1,55 +1,49 @@
-Table of Contents:
+# Verity Protocol Specification v0.0.1
 
-1. Introduction & Motivation
-   · The problem of AI-generated misinformation in elections
-   · Limitations of current solutions
-   · Overview of Verity's approach
-2. Core Principles
-   · Self-sovereign identity for institutions
-   · Cryptographic binding of content to source
-   · Multi-tier verification model
-   · Open standards and interoperability
-3. System Architecture Overview
-   · High-level component diagram
-   · Data flow: Signing → Anchoring → Verification
-   · Trust model and delegation hierarchy
-4. Cryptographic Foundations
-   · Key algorithms: Ed25519, SHA-256, SHA-512
-   · Digital signature format (JSON Web Signatures/JSON-LD Signatures)
-   · Content hashing methodology
-   · DID method specifications
-5. Data Structures
-   · Verity Claim: The core assertion structure
-   · DID Document (did:verity): Identity representation
-   · Accreditation Credential: Trust delegation
-   · Delegation Credential: Role authorization
-   · Anchor Receipt: Ledger proof
-6. API Specifications
-   · Ledger Gateway API (for anchoring and querying)
-   · Public Verification API (for content verification)
-   · DID Resolution API
-   · Webhook standards for async operations
-7. Verification Tiers
-   · Tier S (Secure): Cryptographic verification via official sources
-   · Tier 1 (Social): Platform-normalized verification
-   · Tier 2 (Wild): Evidence-based probabilistic verification
-   · Decision flowcharts and confidence scoring
-8. Content Type Handling
-   · Text/PDF: Direct cryptographic hashing
-   · Images: Watermarking and perceptual hashing standards
-   · Video/Audio: Keyframe fingerprinting specifications
-   · Platform transformation profiles
-9. Governance & Compliance
-   · Versioning policy
-   · Accreditation process for entities
-   · Revocation procedures
-   · Compliance test suite
-10. Security Considerations
-    · Threat model analysis
-    · Key management requirements
-    · Privacy implications
-    · Recovery procedures
-11. Appendices
-    · Glossary of terms
-    · Example flows
-    · References to W3C/IANA/RFC standards
+## Executive Summary
+The Verity Protocol enables cryptographic verification of digital content authenticity, specifically designed to combat AI-generated misinformation in democratic processes. It provides a multi-tier verification system that ranges from cryptographic proof for official sources to evidence-based analysis for social media content.
+
+### Core Innovation
+1. **Self-Sovereign Identity for Institutions**: Organizations control their own digital identities using W3C Decentralized Identifiers (DIDs)
+2. **Cryptographic Content Binding**: Content is irrevocably linked to its source via digital signatures
+3. **Multi-Tier Verification**: Different verification strengths based on content source and transformation
+4. **Platform-Resilient Authentication**: Special handling for social media platform transformations
+
+## 1. Introduction & Motivation
+
+### 1.1 The Problem Space
+AI-generated misinformation represents an existential threat to democratic processes. Recent elections have seen:
+- Deepfake audio of candidates making false statements
+- AI-generated images of fake election notices
+- Synthetic videos of poll workers engaging in fraud
+
+### 1.2 Limitations of Current Solutions
+- **Fact-checking**: Too slow, reactive rather than proactive
+- **Platform moderation**: Inconsistent, opaque, and politically fraught
+- **Media literacy**: Insufficient against sophisticated AI forgeries
+- **Digital signatures**: Don't work for platform-transformed content
+
+### 1.3 Verity's Approach
+Verity provides a protocol for:
+1. **Issuance**: Trusted entities cryptographically sign official content
+2. **Anchoring**: Signatures are recorded on an immutable ledger
+3. **Verification**: Anyone can verify content authenticity in seconds
+4. **Attribution**: Clear provenance chains showing content origin
+
+## 2. Core Principles
+
+### 2.1 Foundational Principles
+1. **Self-Sovereignty**: Entities control their own digital identities
+2. **Cryptographic Integrity**: Security based on proven cryptography, not heuristics
+3. **Progressive Trust**: Multiple verification tiers with clear confidence levels
+4. **Open Standards**: Built on W3C, IETF, and other open standards
+
+### 2.2 Design Goals
+- **Speed**: Verification under 2 seconds for common cases
+- **Accuracy**: Cryptographic certainty for official sources
+- **Usability**: Simple enough for non-technical users
+- **Scalability**: Support for millions of concurrent verifications
+
+## 3. System Architecture
+
+### 3.1 High-Level Architecture
