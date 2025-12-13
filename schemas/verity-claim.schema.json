@@ -1,0 +1,176 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://verity.foundation/schemas/verity-claim/v0.9.0.json",
+  "title": "VerityClaim",
+  "description": "A Verity Claim asserting the authenticity of digital content",
+  "type": "object",
+  "required": [
+    "@context",
+    "id",
+    "type",
+    "issuer",
+    "issuanceDate",
+    "credentialSubject",
+    "proof"
+  ],
+  "properties": {
+    "@context": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^https?://"
+      },
+      "minItems": 1,
+      "description": "JSON-LD contexts. MUST include 'https://www.w3.org/ns/credentials/v2'"
+    },
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Unique claim identifier as a UUID URN"
+    },
+    "type": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "contains": {
+        "const": "VerifiableCredential"
+      },
+      "minItems": 2,
+      "description": "Claim types. MUST include 'VerifiableCredential' and 'VerityAssertion'"
+    },
+    "issuer": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^did:verity:",
+      "description": "DID of the issuing entity"
+    },
+    "issuanceDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the claim was issued (ISO 8601)"
+    },
+    "expirationDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional expiration date (ISO 8601)"
+    },
+    "credentialSubject": {
+      "type": "object",
+      "required": ["id", "contentHash"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI identifying the subject, typically the content URI"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 hash of the content in multihash format"
+        },
+        "sourceURI": {
+          "type": "string",
+          "format": "uri",
+          "description": "Official source URL for the content"
+        },
+        "perceptualHash": {
+          "type": "string",
+          "pattern": "^phash:[a-f0-9]+$",
+          "description": "Perceptual hash for image/video content"
+        },
+        "platformHashes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "description": "Platform-specific normalized hashes (twitter, facebook, etc.)"
+        },
+        "watermarkId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+          "description": "TrustMark watermark identifier for images"
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uri"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["DelegationCredential", "AccreditationCredential"]
+          }
+        }
+      },
+      "description": "References to supporting credentials in the trust chain"
+    },
+    "proof": {
+      "type": "object",
+      "required": ["type", "created", "verificationMethod", "proofPurpose", "proofValue"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "Ed25519Signature2020"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verificationMethod": {
+          "type": "string",
+          "format": "uri"
+        },
+        "proofPurpose": {
+          "type": "string",
+          "const": "assertionMethod"
+        },
+        "proofValue": {
+          "type": "string",
+          "description": "Base58-encoded Ed25519 signature"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://verity.foundation/contexts/verity-claim/v1"
+      ],
+      "id": "urn:uuid:550e8400-e29b-41d4-a716-446655440000",
+      "type": ["VerifiableCredential", "VerityAssertion"],
+      "issuer": "did:verity:org:cook-county-elections",
+      "issuanceDate": "2024-01-01T12:00:00Z",
+      "credentialSubject": {
+        "id": "https://elections.cookcounty.gov/voter-guide.pdf",
+        "contentHash": "sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+        "sourceURI": "https://elections.cookcounty.gov/voter-guide.pdf",
+        "platformHashes": {
+          "twitter": "sha256:486ea46224d1bb4fb680f34f7c9ad96a8f24ec88be73ea8e5a6c65260e9cb8a7"
+        }
+      },
+      "evidence": [
+        {
+          "id": "urn:uuid:delegation-1234",
+          "type": "DelegationCredential"
+        }
+      ],
+      "proof": {
+        "type": "Ed25519Signature2020",
+        "created": "2024-01-01T12:00:00Z",
+        "verificationMethod": "did:verity:org:cook-county-elections#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "z58DAdFfa9SkqZMVPxAQpic7ndSayn1PzZs6ZjWp1CktyGesjuTSwRdoWhAfGFCF5bppETSTojQCrfFPP2oumHKtz"
+      }
+    }
+  ]
+}
